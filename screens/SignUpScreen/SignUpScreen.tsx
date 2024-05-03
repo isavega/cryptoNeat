@@ -5,16 +5,18 @@ import { Input, Button } from '@rneui/themed'
 import style from './styles'
 import color from '../../styles/colors'
 
-const SignInScreen = ({ navigation }) => {
+const SignUpScreen = (props) => {
     return (
         <View style={style.screen}>
             <View style={style.container}>
-                <Text style={style.title}>Iniciar Sesión</Text>
+                <Text style={style.title}>Crea tu cuenta</Text>
+                <Input
+                    placeholder="Nombre"
+                    inputContainerStyle={style.inputContainer}
+                    inputStyle={style.inputText}
+                />
                 <Input
                     placeholder="Email"
-                    rightIcon={
-                        <Icon name="user" size={24} color={color.green} />
-                    }
                     autoCapitalize="none"
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputText}
@@ -31,9 +33,8 @@ const SignInScreen = ({ navigation }) => {
                 />
 
                 <Button
-                    title="Ingresar"
+                    title="Crear cuenta"
                     type="outline"
-                    onPress={() => navigation.navigate('Home')}
                     buttonStyle={style.button.container}
                     titleStyle={style.button.text}
                 />
@@ -42,4 +43,4 @@ const SignInScreen = ({ navigation }) => {
     )
 }
 
-export default SignInScreen
+export default SignUpScreen
