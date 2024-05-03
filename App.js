@@ -1,15 +1,21 @@
+import "react-native-gesture-handler";
 import { Text } from "react-native";
 import { useFonts } from "expo-font";
-import HomeScreen from "./screens/HomeScreen/HomeScreen.tsx";
+import AppNavigation from "./navigation/AppNavigation";
 
-export default function App() {
+const App = () => {
   const [fontsLoaded] = useFonts({
     PoppinsBold: require("./assets/fonts/PoppinsBold.ttf"),
     PoppinsRegular: require("./assets/fonts/PoppinsRegular.ttf"),
   });
+
   if (!fontsLoaded) {
     return <Text>Loading...</Text>;
   }
 
-  return <HomeScreen />;
-}
+  const isLoggedIn = true;
+
+  return <AppNavigation isLoggedIn={isLoggedIn} />;
+};
+
+export default App;
