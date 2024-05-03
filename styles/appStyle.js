@@ -38,6 +38,7 @@ const appStyle = StyleSheet.create({
             backgroundColor: color.information.primary,
             padding: 10,
             margin: 10,
+            marginBottom: 20,
             borderRadius: 5,
         },
         text: {
