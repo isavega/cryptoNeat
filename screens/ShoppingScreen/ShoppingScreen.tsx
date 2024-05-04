@@ -4,7 +4,7 @@ import { Button } from '@rneui/themed'
 import style from './styles'
 import Dropdown from 'react-native-input-select'
 
-const ShoppingScreen = (props) => {
+const ShoppingScreen = () => {
     const dummyCryptoData = [
         {
             label: 'Bitcoin',

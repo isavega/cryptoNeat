@@ -2,8 +2,10 @@ import React from 'react'
 import { View, Image, Text } from 'react-native'
 import { Button, Card } from '@rneui/themed'
 import style from './styles'
+import { useNavigation } from '@react-navigation/native'
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
+    const navigation = useNavigation()
     const dummyCryptoData = [
         {
             id: 1,

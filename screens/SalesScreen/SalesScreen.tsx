@@ -5,7 +5,7 @@ import style from './styles'
 import color from '../../styles/colors'
 import Dropdown from 'react-native-input-select'
 
-const SalesScreen = (props) => {
+const SalesScreen = () => {
     const dummyCryptoData = [
         {
             label: 'Bitcoin',

@@ -10,16 +10,24 @@ import ShoppingScreen from '../../screens/ShoppingScreen/ShoppingScreen'
 import color from '../../styles/colors'
 import { Button } from '@rneui/themed'
 import style from './style'
+import { logOut } from '../../redux/slice/authSlice'
+import { useDispatch } from 'react-redux'
 
 const Drawer = createDrawerNavigator()
 
 const Logout = () => {
+    const dispatch = useDispatch()
+
+    const logOutHandler = () => {
+        dispatch(logOut())
+    }
+
     return (
         <Button
             title="Cerrar Sesión"
             buttonStyle={style.buttonLogOut.container}
             titleStyle={style.buttonLogOut.text}
-            onPress={() => {}}
+            onPress={logOutHandler}
         />
     )
 }
