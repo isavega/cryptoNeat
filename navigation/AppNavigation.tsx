@@ -1,17 +1,16 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AppDrawer from './Drawer/Drawer'
-import HomeScreen from '../screens/HomeScreen/HomeScreen'
 import SignInScreen from '../screens/SignInScreen/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen/SignUpScreen'
-import SalesScreen from '../screens/SalesScreen/SalesScreen'
-import ShoppingScreen from '../screens/ShoppingScreen/ShoppingScreen'
 import color from '../styles/colors'
+import { useSelector } from 'react-redux'
 
 const Stack = createNativeStackNavigator()
 
-const AppNavigation = (isLoggedIn: Boolean) => {
-    // const { isLoggedIn } = useAuth();
+const AppNavigation = () => {
+    const auth = useSelector((state) => state.auth)
+    const { isAuthenticated } = auth
 
     return (
         <NavigationContainer>
@@ -26,17 +25,11 @@ const AppNavigation = (isLoggedIn: Boolean) => {
                     },
                 }}
             >
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                     <Stack.Group>
                         <Stack.Screen
                             name="Neat Cryptos"
                             component={AppDrawer}
-                        />
-                        <Stack.Screen name="Home" component={HomeScreen} />
-                        <Stack.Screen name="Sales" component={SalesScreen} />
-                        <Stack.Screen
-                            name="Shopping"
-                            component={ShoppingScreen}
                         />
                     </Stack.Group>
                 ) : (
