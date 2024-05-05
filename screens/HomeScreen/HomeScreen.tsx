@@ -1,43 +1,19 @@
 import React from 'react'
-import { View, Image, Text } from 'react-native'
+import { View, Image, Text, ScrollView } from 'react-native'
 import { Button, Card } from '@rneui/themed'
 import style from './styles'
-import { useNavigation } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
+import { dummyCryptoData } from '../../utils/constants'
 
-const HomeScreen = () => {
-    const navigation = useNavigation()
-    const dummyCryptoData = [
-        {
-            id: 1,
-            name: 'Bitcoin',
-            priceUSD: '10000',
-            image: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-        },
-        {
-            id: 2,
-            name: 'Ethereum',
-            priceUSD: '10000',
-            image: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-        },
-        {
-            id: 3,
-            name: 'Theter',
-            priceUSD: '10000',
-            image: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
-        },
-        {
-            id: 4,
-            name: 'Dogecoin',
-
-            priceUSD: '10000',
-            image: 'https://cryptologos.cc/logos/dogecoin-doge-logo.png',
-        },
-    ]
+const HomeScreen = ({ navigation }) => {
+    const currentUser = useSelector((state) => state.user.user)
 
     return (
-        <View style={style.screen}>
-            <Text style={style.title}>Valor Portafolio USD: $3,233</Text>
-            <Text style={style.title}>Cryptos favoritas</Text>
+        <ScrollView style={style.scrollScreen}>
+            <Text style={style.text}>
+                Portafolio de {currentUser?.displayName}
+            </Text>
+            <Text style={style.textBalance}>$3,233 USD</Text>
             <View style={style.container}>
                 {dummyCryptoData.map((crypto) => (
                     <Card
@@ -45,7 +21,9 @@ const HomeScreen = () => {
                         containerStyle={style.cardContainer}
                         wrapperStyle={{}}
                     >
-                        <Card.Title>{crypto.name}</Card.Title>
+                        <Card.Title style={style.titleCard}>
+                            {crypto.label}
+                        </Card.Title>
                         <Card.Divider />
                         <View
                             style={{
@@ -54,36 +32,38 @@ const HomeScreen = () => {
                             }}
                         >
                             <Image
-                                style={{ width: '50%', height: 50 }}
+                                style={style.image}
                                 resizeMode="contain"
                                 source={{
                                     uri: `${crypto.image}`,
                                 }}
                             />
-                            <Text>{crypto.price}</Text>
-                            <Text>{crypto.price}</Text>
+                            <Text style={style.balanceCard}>
+                                {crypto.amount}
+                            </Text>
+                            <Text style={style.priceCard}>
+                                1 {crypto.value} = ${crypto.priceUSD} USD
+                            </Text>
                         </View>
                     </Card>
                 ))}
-            </View>
 
-            <View style={style.buttonGroupContainer}>
                 <Button
                     title="Comprar"
                     type="outline"
-                    buttonStyle={style.button.container}
-                    titleStyle={style.button.text}
+                    buttonStyle={style.buttonContainer}
+                    titleStyle={style.buttonText}
                     onPress={() => navigation.navigate('Shopping')}
                 />
                 <Button
                     title="Vender"
                     type="outline"
-                    buttonStyle={style.button.container}
-                    titleStyle={style.button.text}
+                    buttonStyle={style.buttonContainer}
+                    titleStyle={style.buttonText}
                     onPress={() => navigation.navigate('Sales')}
                 />
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
