@@ -7,6 +7,7 @@ import { auth } from '../../services/auth'
 import { signUp } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
 import { generateRandomNumber } from '../../utils/utils'
+import { getDatabase, ref, set } from 'firebase/database'
 
 const IMAGE = '../../assets/neat.png'
 
@@ -16,7 +17,17 @@ const SignInScreen = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [userName, setUserName] = useState<string>('')
-    const [balance, setBalance] = useState<number>(generateRandomNumber())
+    const initialBalance = generateRandomNumber()
+
+    const writeUserData = (userId, name, email, balance) => {
+        const db = getDatabase()
+        set(ref(db, 'users/' + userId), {
+            uid: userId,
+            username: name,
+            email: email,
+            balanceUSD: balance,
+        })
+    }
 
     const signUpHandler = async () => {
         try {
@@ -26,9 +37,18 @@ const SignInScreen = ({ navigation }) => {
                 displayName: userName,
             })
 
+            writeUserData(user.uid, userName, email, initialBalance)
+
+            const userPayload = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                balanceUSD: initialBalance,
+            }
+
             dispatch(
                 signUp({
-                    ...user,
+                    ...userPayload,
                 })
             )
             user && navigation.navigate('Home')

@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../services/auth'
 import { useDispatch } from 'react-redux'
 import { signIn } from '../../redux/slice/userSlice'
+import { getDatabase, ref, onValue } from 'firebase/database'
 
 const IMAGE = '../../assets/neat.png'
 
@@ -17,15 +18,24 @@ const SignInScreen = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const readUserData = (userId) => {
+        const db = getDatabase()
+        const starCountRef = ref(db, 'users/' + userId)
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val()
+            dispatch(
+                signIn({
+                    ...data,
+                })
+            )
+        })
+    }
+
     const signInHandler = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password)
             const user = auth.currentUser
-            dispatch(
-                signIn({
-                    ...user,
-                })
-            )
+            readUserData(user.uid)
             user && navigation.navigate('Home')
         } catch (error) {
             console.log('error', error)

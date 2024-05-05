@@ -18,10 +18,11 @@ const SalesScreen = () => {
         )
 
         setCrypto(value)
-        setAmount(selectedCrypto.amount.toString())
+        setAmount(selectedCrypto?.amount.toString())
         setEquivalentUSD(
             `$ ${(
-                Number(selectedCrypto.amount) * Number(selectedCrypto.priceUSD)
+                Number(selectedCrypto?.amount) *
+                Number(selectedCrypto?.priceUSD)
             ).toFixed(2)} USD`
         )
     }
@@ -34,7 +35,7 @@ const SalesScreen = () => {
         )
 
         setEquivalentUSD(
-            `$ ${(Number(value) * Number(selectedCrypto.priceUSD)).toFixed(
+            `$ ${(Number(value) * Number(selectedCrypto?.priceUSD)).toFixed(
                 2
             )} USD`
         )
