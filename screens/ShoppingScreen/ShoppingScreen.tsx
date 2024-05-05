@@ -1,50 +1,79 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text } from 'react-native'
-import { Button } from '@rneui/themed'
+import { Button, Input } from '@rneui/themed'
 import style from './styles'
 import Dropdown from 'react-native-input-select'
+import color from '../../styles/colors'
+import { dummyCryptoData } from '../../utils/constants'
+import { useSelector } from 'react-redux'
 
 const ShoppingScreen = () => {
-    const dummyCryptoData = [
-        {
-            label: 'Bitcoin',
-            value: 'BTC',
-        },
-        {
-            label: 'Ethereum',
-            value: 'ETH',
-        },
-        {
-            label: 'Theter',
-            value: 'USDT',
-        },
-        {
-            label: 'Dogecoin',
-            value: 'DOGE',
-        },
-    ]
+    const usdBalance = useSelector((state) => state.user.usdBalance)
 
-    const [crypto, setCrypto] = React.useState('')
+    const [crypto, setCrypto] = useState('')
+    const [amount, setAmount] = useState('')
+    const [equivalentUSD, setEquivalentUSD] = useState('')
+
+    const isDisabled = !crypto || !amount || amount > usdBalance
+
+    const handleAmountChange = (value) => {
+        setAmount(value)
+
+        const selectedCrypto = dummyCryptoData.find(
+            (cryptoObj) => cryptoObj.value === crypto
+        )
+
+        setEquivalentUSD(
+            `$ ${Number(value) / Number(selectedCrypto.priceUSD)} ${
+                selectedCrypto.value
+            }`
+        )
+    }
+
     return (
         <View style={style.screen}>
-            <Text style={style.title}>Comprar Crypo</Text>
+            <View style={style.formContainer}>
+                <Text style={style.text}>Saldo disponible</Text>
+                <Text style={style.textBalance}>{usdBalance} USD</Text>
+                <Dropdown
+                    placeholder="Selecciona una crypto"
+                    options={dummyCryptoData}
+                    selectedValue={crypto}
+                    onValueChange={(value) => {
+                        setCrypto(value)
+                    }}
+                    primaryColor={color.information.primary}
+                />
 
-            <Dropdown
-                label="Country"
-                placeholder="Select an option..."
-                options={dummyCryptoData}
-                selectedValue={crypto}
-                onValueChange={() => {}}
-                primaryColor={'green'}
-            />
+                <Input
+                    value={amount}
+                    onChangeText={handleAmountChange}
+                    placeholder="Cantidad de USD"
+                    inputContainerStyle={style.inputContainer}
+                    inputStyle={style.inputText}
+                    keyboardType="numeric"
+                />
+                <Input
+                    value={equivalentUSD}
+                    placeholder={`Equivalente en ${crypto} aproximado`}
+                    inputContainerStyle={style.inputContainer}
+                    inputStyle={style.inputTextReadOnly}
+                    readOnly
+                />
 
-            <Button
-                title="Comprar"
-                type="outline"
-                onPress={() => {}}
-                buttonStyle={style.button.container}
-                titleStyle={style.button.text}
-            />
+                <Button
+                    title="Comprar"
+                    type="outline"
+                    disabled={isDisabled}
+                    onPress={() => {}}
+                    buttonStyle={
+                        isDisabled
+                            ? style.buttonContainerDisabled
+                            : style.buttonContainer
+                    }
+                    titleStyle={style.buttonText}
+                />
+            </View>
         </View>
     )
 }

@@ -3,33 +3,38 @@ import appStyle from '../../styles/appStyle'
 import color from '../../styles/colors'
 
 const style = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        padding: 10,
+    formContainer: {
+        width: '80%',
+        position: 'absolute',
+        top: '10%',
     },
-    cardContainer: {
-        margin: 10,
-        width: '40%',
-        aspectRatio: 1,
-        borderRadius: 10,
-        backgroundColor: color.gray[200],
-        marginBottom: 5,
-    },
-    title: {
-        color: color.white,
-        padding: 10,
+    inputContainer: {
+        marginTop: 20,
         marginBottom: 20,
-        fontSize: 18,
-        textAlign: 'center',
+    },
+    inputText: {
+        color: color.white,
+        fontSize: 16,
+        textAlign: 'left',
         fontFamily: 'PoppinsRegular',
     },
-    buttonGroupContainer: {
+    inputTextReadOnly: {
+        color: color.feedback.success,
+        fontSize: 16,
+        textAlign: 'left',
+        fontFamily: 'PoppinsRegular',
+    },
+    switchContainer: {
+        marginBottom: '15%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
-        marginTop: 20,
+    },
+    switchText: {
+        color: color.white,
+        fontSize: 16,
+        marginRight: 15,
+        fontFamily: 'PoppinsRegular',
     },
 })
 
