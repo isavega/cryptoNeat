@@ -1,17 +1,33 @@
-import React from 'react'
-import { View, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { ScrollView } from 'react-native'
 import { ListItem } from '@rneui/themed'
 import style from './styles'
-import {
-    dummyTransactionData,
-    BUY,
-    transactionTypeMap,
-} from '../../utils/constants'
+import { BUY, transactionTypeMap } from '../../utils/constants'
+import { formatDateTime } from '../../utils/utils'
+import { getDatabase, ref, onValue } from 'firebase/database'
+import { useSelector } from 'react-redux'
 
 const TransactionHistoryScreen = () => {
+    const currentUser = useSelector((state) => state.user.user)
+    const [transactionData, setTransactionData] = useState([])
+
+    const readTransactionUserData = (userId) => {
+        const db = getDatabase()
+        const starCountRef = ref(db, 'transactions/' + userId)
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val()
+            console.log('TRX DATA: ', Object.values(data))
+            setTransactionData(Object.values(data))
+        })
+    }
+
+    useEffect(() => {
+        readTransactionUserData(currentUser.uid)
+    }, [])
+
     return (
         <ScrollView style={style.scrollScreen}>
-            {dummyTransactionData.map((item, index) => (
+            {transactionData?.map((item, index) => (
                 <ListItem
                     key={index}
                     bottomDivider
@@ -19,17 +35,17 @@ const TransactionHistoryScreen = () => {
                 >
                     <ListItem.Content>
                         <ListItem.Title style={style.itemDate}>
-                            {item.date}
+                            {formatDateTime(item.date)}
                         </ListItem.Title>
                         <ListItem.Subtitle
                             style={
-                                item.type === BUY
+                                item.operationType === BUY
                                     ? style.itemBuy
                                     : style.itemSell
                             }
                         >
-                            {transactionTypeMap[item.type]} de {item.amount}{' '}
-                            {item.crypto}
+                            {transactionTypeMap[item.operationType]} de{' '}
+                            {item.amount} {item.crypto}
                         </ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>

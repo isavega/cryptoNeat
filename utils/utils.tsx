@@ -13,3 +13,19 @@ export const generateRandomSuccessRate = (): boolean => {
     const randomValue = Math.random()
     return randomValue <= 0.9
 }
+
+export const formatDateTime = (dateTimeString: string): string => {
+    const date = new Date(dateTimeString)
+    const formattedTime = date.toLocaleString('es-ES', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    })
+    const formattedDate = date.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    })
+
+    return `${formattedTime} - ${formattedDate.replace(/\//g, '/')}`
+}
