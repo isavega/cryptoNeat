@@ -10,7 +10,7 @@ import ShoppingScreen from '../../screens/ShoppingScreen/ShoppingScreen'
 import color from '../../styles/colors'
 import { Button } from '@rneui/themed'
 import style from './style'
-import { logOut } from '../../redux/slice/authSlice'
+import { logOut } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
 
 const Drawer = createDrawerNavigator()
@@ -25,8 +25,8 @@ const Logout = () => {
     return (
         <Button
             title="Cerrar Sesión"
-            buttonStyle={style.buttonLogOut.container}
-            titleStyle={style.buttonLogOut.text}
+            buttonStyle={style.buttonLogOutContainer}
+            titleStyle={style.buttonLogOutText}
             onPress={logOutHandler}
         />
     )
@@ -67,14 +67,14 @@ const AppDrawer = () => {
                 name="Sales"
                 component={SalesScreen}
                 options={{
-                    title: 'Comprar Cryptos',
+                    title: 'Vender Cryptos',
                 }}
             />
             <Drawer.Screen
                 name="Shopping"
                 component={ShoppingScreen}
                 options={{
-                    title: 'Vender Cryptos',
+                    title: 'Comprar Cryptos',
                 }}
             />
             <Drawer.Screen
