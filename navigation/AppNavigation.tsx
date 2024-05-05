@@ -9,7 +9,8 @@ import { useSelector } from 'react-redux'
 const Stack = createNativeStackNavigator()
 
 const AppNavigation = () => {
-    const currentUser = useSelector((state) => state.user.user)
+    const isAuthenticated = useSelector((state) => state.user.isAuthenticated)
+
     return (
         <NavigationContainer>
             <Stack.Navigator
@@ -23,7 +24,7 @@ const AppNavigation = () => {
                     },
                 }}
             >
-                {currentUser ? (
+                {isAuthenticated ? (
                     <Stack.Group>
                         <Stack.Screen
                             name="Neat Cryptos"
