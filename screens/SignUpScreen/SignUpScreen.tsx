@@ -2,38 +2,33 @@ import React, { useState } from 'react'
 import { View, Text, Image } from 'react-native'
 import { Input, Button } from '@rneui/themed'
 import style from './styles'
-import { useNavigation } from '@react-navigation/native'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '../../services/auth'
-import { signUp } from '../../redux/slice/authSlice'
+import { signUp } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
+import { generateRandomNumber } from '../../utils/utils'
 
 const IMAGE = '../../assets/neat.png'
 
-const SignInScreen = () => {
-    const navigation = useNavigation()
+const SignInScreen = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [userName, setUserName] = useState<string>('')
+    const [balance, setBalance] = useState<number>(generateRandomNumber())
 
     const signUpHandler = async () => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
-            )
-            const user = userCredential.user
+            await createUserWithEmailAndPassword(auth, email, password)
+            const user = auth.currentUser
+            await updateProfile(user, {
+                displayName: userName,
+            })
+
             dispatch(
                 signUp({
-                    isAuthenticated: true,
-                    user: {
-                        email: user.email,
-                        uid: user.uid,
-                        userName,
-                    },
+                    ...user,
                 })
             )
             user && navigation.navigate('Home')
@@ -74,14 +69,14 @@ const SignInScreen = () => {
                     title="Crear Cuenta"
                     type="outline"
                     onPress={signUpHandler}
-                    buttonStyle={style.button.container}
-                    titleStyle={style.button.text}
+                    buttonStyle={style.buttonContainer}
+                    titleStyle={style.buttonText}
                 />
                 <Button
                     title="Ingresa a tu cuenta"
                     type="clear"
                     onPress={() => navigation.navigate('SignIn')}
-                    titleStyle={style.button.text}
+                    titleStyle={style.buttonText}
                 />
             </View>
         </View>

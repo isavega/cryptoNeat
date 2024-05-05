@@ -4,16 +4,14 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { Input, Button } from '@rneui/themed'
 import style from './styles'
 import color from '../../styles/colors'
-import { useNavigation } from '@react-navigation/native'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../services/auth'
 import { useDispatch } from 'react-redux'
-import { signIn } from '../../redux/slice/authSlice'
+import { signIn } from '../../redux/slice/userSlice'
 
 const IMAGE = '../../assets/neat.png'
 
-const SignInScreen = () => {
-    const navigation = useNavigation()
+const SignInScreen = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const [email, setEmail] = useState('')
@@ -21,19 +19,11 @@ const SignInScreen = () => {
 
     const signInHandler = async () => {
         try {
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            )
-            const user = userCredential.user
+            await signInWithEmailAndPassword(auth, email, password)
+            const user = auth.currentUser
             dispatch(
                 signIn({
-                    isAuthenticated: true,
-                    user: {
-                        email: user.email,
-                        uid: user.uid,
-                    },
+                    ...user,
                 })
             )
             user && navigation.navigate('Home')
@@ -48,6 +38,8 @@ const SignInScreen = () => {
             <View style={style.container}>
                 <Text style={style.title}>Iniciar Sesión</Text>
                 <Input
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
                     placeholder="Email"
                     rightIcon={
                         <Icon name="user" size={24} color={color.green} />
@@ -57,6 +49,8 @@ const SignInScreen = () => {
                     inputStyle={style.inputText}
                 />
                 <Input
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
                     placeholder="Contraseña"
                     rightIcon={
                         <Icon name="lock" size={24} color={color.green} />
@@ -71,14 +65,14 @@ const SignInScreen = () => {
                     title="Ingresar"
                     type="outline"
                     onPress={signInHandler}
-                    buttonStyle={style.button.container}
-                    titleStyle={style.button.text}
+                    buttonStyle={style.buttonContainer}
+                    titleStyle={style.buttonText}
                 />
                 <Button
                     title="Crear Cuenta"
                     type="clear"
                     onPress={() => navigation.navigate('SignUp')}
-                    titleStyle={style.button.text}
+                    titleStyle={style.buttonText}
                 />
             </View>
         </View>
