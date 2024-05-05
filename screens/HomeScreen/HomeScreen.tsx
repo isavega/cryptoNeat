@@ -4,6 +4,7 @@ import { Button, Card } from '@rneui/themed'
 import style from './styles'
 import { useSelector } from 'react-redux'
 import { dummyCryptoData } from '../../utils/constants'
+import { formatToUSD } from '../../utils/utils'
 
 const HomeScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)
@@ -11,9 +12,11 @@ const HomeScreen = ({ navigation }) => {
     return (
         <ScrollView style={style.scrollScreen}>
             <Text style={style.text}>
-                Portafolio de {currentUser?.displayName}
+                Portafolio de {currentUser?.username}
             </Text>
-            <Text style={style.textBalance}>$3,233 USD</Text>
+            <Text style={style.textBalance}>
+                ${formatToUSD(currentUser?.balanceUSD)} USD
+            </Text>
             <View style={style.container}>
                 {dummyCryptoData.map((crypto) => (
                     <Card
@@ -42,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
                                 {crypto.amount}
                             </Text>
                             <Text style={style.priceCard}>
-                                1 {crypto.value} = ${crypto.priceUSD} USD
+                                1 {crypto.value} = ${crypto?.priceUSD} USD
                             </Text>
                         </View>
                     </Card>
