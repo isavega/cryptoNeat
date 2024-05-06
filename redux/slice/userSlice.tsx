@@ -23,7 +23,7 @@ const userSlice = createSlice({
             state.isAuthenticated = true
         },
         logOut: (state) => {
-            state.user = null
+            state.user = initialState.user
             state.isAuthenticated = false
         },
         updateBalance: (state, action) => {

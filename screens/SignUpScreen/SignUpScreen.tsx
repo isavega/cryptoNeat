@@ -7,8 +7,7 @@ import { auth } from '../../services/firebase'
 import { signUp } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
 import { generateRandomNumber } from '../../utils/utils'
-import { writeUserData } from '../../services/realTimeDataBase'
-
+import { writeUserData } from '../../services/realtimeDatabase'
 const IMAGE = '../../assets/neat.png'
 
 const SignInScreen = ({ navigation }) => {

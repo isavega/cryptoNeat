@@ -44,8 +44,12 @@ const cryptoSlice = createSlice({
         updateCryptoPortfolio: (state, action) => {
             state.cryptoPortfolio = action.payload
         },
+        restarCryptoPortfolio: (state) => {
+            state.cryptoPortfolio = initialState.cryptoPortfolio
+        },
     },
 })
 
-export const { updateCryptoPortfolio } = cryptoSlice.actions
+export const { updateCryptoPortfolio, restarCryptoPortfolio } =
+    cryptoSlice.actions
 export default cryptoSlice.reducer

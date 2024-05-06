@@ -13,7 +13,7 @@ import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
     writeTransactionData,
     updateUserData,
-} from '../../services/realTimeDataBase'
+} from '../../services/realtimeDatabase'
 
 const SalesScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)

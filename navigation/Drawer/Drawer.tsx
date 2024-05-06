@@ -11,6 +11,7 @@ import color from '../../styles/colors'
 import { Button } from '@rneui/themed'
 import style from './style'
 import { logOut } from '../../redux/slice/userSlice'
+import { restarCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import { useDispatch } from 'react-redux'
 
 const Drawer = createDrawerNavigator()
@@ -20,6 +21,7 @@ const Logout = () => {
 
     const logOutHandler = () => {
         dispatch(logOut())
+        dispatch(restarCryptoPortfolio())
     }
 
     return (
