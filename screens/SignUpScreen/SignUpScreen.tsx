@@ -8,9 +8,11 @@ import { signUp } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
 import { generateRandomNumber } from '../../utils/utils'
 import { writeUserData } from '../../services/realtimeDatabase'
+import { Navigation } from '../../models'
+
 const IMAGE = '../../assets/neat.png'
 
-const SignInScreen = ({ navigation }) => {
+const SignUpScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const [email, setEmail] = useState('')
@@ -18,33 +20,47 @@ const SignInScreen = ({ navigation }) => {
     const [userName, setUserName] = useState<string>('')
     const initialBalance = generateRandomNumber()
 
+    const clearFields = () => {
+        setEmail('')
+        setPassword('')
+        setUserName('')
+    }
+
     const signUpHandler = async () => {
         try {
-            await createUserWithEmailAndPassword(auth, email, password)
-            const user = auth.currentUser
-            await updateProfile(user, {
-                displayName: userName,
-            })
-
-            writeUserData(user.uid, userName, email, initialBalance)
-
-            const userPayload = {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                balanceUSD: initialBalance,
-            }
-
-            dispatch(
-                signUp({
-                    ...userPayload,
-                })
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
             )
-            user && navigation.navigate('Home')
+            const user = userCredential.user
+            if (user) {
+                await updateProfile(user, {
+                    displayName: userName,
+                })
+
+                writeUserData(user.uid, userName, email, initialBalance)
+
+                const userPayload = {
+                    uid: user.uid,
+                    email: user.email,
+                    username: user.displayName || userName,
+                    balanceUSD: initialBalance,
+                }
+
+                dispatch(
+                    signUp({
+                        ...userPayload,
+                    })
+                )
+
+                navigation.navigate('Home')
+            }
         } catch (error) {
             alert(
                 `Error: ${error.code}. Por favor, intenta con otro correo electrónico`
             )
+            clearFields()
         }
     }
 
@@ -94,4 +110,4 @@ const SignInScreen = ({ navigation }) => {
     )
 }
 
-export default SignInScreen
+export default SignUpScreen

@@ -4,10 +4,9 @@ import { Button, Input } from '@rneui/themed'
 import style from './styles'
 import Dropdown from 'react-native-input-select'
 import color from '../../styles/colors'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { formatToUSD, generateRandomSuccessRate } from '../../utils/utils'
 import { BUY } from '../../utils/constants'
-import { useDispatch } from 'react-redux'
 import { updateBalance } from '../../redux/slice/userSlice'
 import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
@@ -15,27 +14,32 @@ import {
     updateUserData,
     writePortfoliosData,
 } from '../../services/realtimeDatabase'
+import { RootState, Navigation, Crypto } from '../../models'
 
-const ShoppingScreen = ({ navigation }) => {
-    const currentUser = useSelector((state) => state.user.user)
-    const cryptoPortfolio = useSelector((state) => state.crypto.cryptoPortfolio)
+const ShoppingScreen: React.FC<{ navigation: Navigation }> = ({
+    navigation,
+}) => {
+    const currentUser = useSelector((state: RootState) => state.user.user)
+    const cryptoPortfolio = useSelector(
+        (state: RootState) => state.crypto.cryptoPortfolio
+    )
     const dispatch = useDispatch()
 
-    const [crypto, setCrypto] = useState('')
-    const [usdAmount, setUsdAmount] = useState('')
-    const [equivalentCrypto, setEquivalentCrypto] = useState(0)
+    const [crypto, setCrypto] = useState<string>('')
+    const [usdAmount, setUsdAmount] = useState<string>('')
+    const [equivalentCrypto, setEquivalentCrypto] = useState<number>(0)
 
     const isDisabled =
-        !crypto || !usdAmount || usdAmount > currentUser.balanceUSD
+        !crypto || !usdAmount || Number(usdAmount) > currentUser.balanceUSD
 
-    const handleAmountChange = (value) => {
+    const handleAmountChange = (value: string) => {
         setUsdAmount(value)
 
         const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
-        setEquivalentCrypto(Number(value) / Number(selectedCrypto?.priceUSD))
+        setEquivalentCrypto(Number(value) / (selectedCrypto?.priceUSD ?? 1))
     }
 
     const clearFields = () => {
@@ -44,7 +48,11 @@ const ShoppingScreen = ({ navigation }) => {
         setEquivalentCrypto(0)
     }
 
-    const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
+    const getNewCryptoPortfolio = (
+        cryptoPortfolio: Crypto[],
+        crypto: string,
+        amount: number
+    ) => {
         return cryptoPortfolio.map((cryptoObj) => {
             if (cryptoObj.value === crypto) {
                 return {
@@ -112,7 +120,7 @@ const ShoppingScreen = ({ navigation }) => {
                     readOnly={!crypto}
                 />
                 <Input
-                    value={`$ ${equivalentCrypto} ${crypto}`}
+                    value={`$ ${equivalentCrypto.toFixed(2)} ${crypto}`}
                     placeholder={`Equivalente en ${crypto} aproximado`}
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputTextReadOnly}

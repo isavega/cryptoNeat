@@ -8,21 +8,27 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../services/firebase'
 import { useDispatch } from 'react-redux'
 import { signIn } from '../../redux/slice/userSlice'
-import { getDatabase, ref, onValue } from 'firebase/database'
+import { getDatabase, ref, onValue, DataSnapshot } from 'firebase/database'
 import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
+import { Navigation } from '../../models'
 
 const IMAGE = '../../assets/neat.png'
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const readUserData = (userId) => {
+    const clearFields = () => {
+        setEmail('')
+        setPassword('')
+    }
+
+    const readUserData = (userId: string) => {
         const db = getDatabase()
         const starCountRef = ref(db, 'users/' + userId)
-        onValue(starCountRef, (snapshot) => {
+        onValue(starCountRef, (snapshot: DataSnapshot) => {
             const data = snapshot.val()
             dispatch(
                 signIn({
@@ -32,10 +38,10 @@ const SignInScreen = ({ navigation }) => {
         })
     }
 
-    const readUserPortfolio = (userId) => {
+    const readUserPortfolio = (userId: string) => {
         const db = getDatabase()
         const starCountRef = ref(db, 'portfolios/' + userId)
-        onValue(starCountRef, (snapshot) => {
+        onValue(starCountRef, (snapshot: DataSnapshot) => {
             const data = snapshot.val()
             const cryptoPortfolio = Object.values(data).flat()
             dispatch(updateCryptoPortfolio(cryptoPortfolio))
@@ -46,13 +52,16 @@ const SignInScreen = ({ navigation }) => {
         try {
             await signInWithEmailAndPassword(auth, email, password)
             const user = auth.currentUser
-            readUserData(user.uid)
-            readUserPortfolio(user.uid)
-            user && navigation.navigate('Home')
+            if (user) {
+                readUserData(user.uid)
+                readUserPortfolio(user.uid)
+                navigation.navigate('Home')
+            }
         } catch (error) {
             alert(
                 `Error: ${error.code}. Por favor, intenta con otro correo electrónico o contraseña`
             )
+            clearFields()
         }
     }
 

@@ -4,29 +4,32 @@ import { ListItem } from '@rneui/themed'
 import style from './styles'
 import { BUY } from '../../utils/constants'
 import { formatDateTime } from '../../utils/utils'
-import { getDatabase, ref, onValue } from 'firebase/database'
+import { getDatabase, ref, onValue, DataSnapshot } from 'firebase/database'
 import { useSelector } from 'react-redux'
+import { Transaction } from '../../models'
 
-const TransactionHistoryScreen = () => {
-    const currentUser = useSelector((state) => state.user.user)
-    const [transactionData, setTransactionData] = useState([])
+const TransactionHistoryScreen: React.FC = () => {
+    const currentUser = useSelector((state: any) => state.user.user)
+    const [transactionData, setTransactionData] = useState<Transaction[]>([])
 
-    const readTransactionUserData = (userId) => {
+    const readTransactionUserData = (userId: string) => {
         const db = getDatabase()
         const starCountRef = ref(db, 'transactions/' + userId)
-        onValue(starCountRef, (snapshot) => {
+        onValue(starCountRef, (snapshot: DataSnapshot) => {
             const data = snapshot.val()
-            setTransactionData(Object.values(data))
+            if (data) {
+                setTransactionData(Object.values(data))
+            }
         })
     }
 
     useEffect(() => {
         readTransactionUserData(currentUser.uid)
-    }, [])
+    }, [currentUser.uid])
 
     return (
         <ScrollView style={style.scrollScreen}>
-            {transactionData?.map((item, index) => (
+            {transactionData?.map((item: Transaction, index: number) => (
                 <ListItem
                     key={index}
                     bottomDivider
@@ -44,7 +47,7 @@ const TransactionHistoryScreen = () => {
                             }
                         >
                             {item.operationType === BUY
-                                ? `Compra de $${item.amount} USD para ${item.crypto}`
+                                ? `Compra de $${item.amount} USD en ${item.crypto}`
                                 : `Venta de ${item.amount} ${item.crypto}`}
                         </ListItem.Subtitle>
                     </ListItem.Content>

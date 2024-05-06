@@ -1,10 +1,9 @@
-// function for generating a random number between 100 and 100,000
-export const generateRandomNumber = () => {
+export const generateRandomNumber = (): number => {
     return Math.floor(Math.random() * 100000) + 100
 }
 
 export const formatToUSD = (amount: number): string => {
-    const parts = amount?.toFixed(2).toString().split('.')
+    const parts = amount.toFixed(2).toString().split('.')
     const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     return `${integerPart}.${parts[1]}`
 }

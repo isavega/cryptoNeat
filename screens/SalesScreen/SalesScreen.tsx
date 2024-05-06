@@ -4,10 +4,9 @@ import { Button, Input, Switch } from '@rneui/themed'
 import style from './styles'
 import color from '../../styles/colors'
 import Dropdown from 'react-native-input-select'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { generateRandomSuccessRate } from '../../utils/utils'
 import { SELL } from '../../utils/constants'
-import { useDispatch } from 'react-redux'
 import { updateBalance } from '../../redux/slice/userSlice'
 import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
@@ -15,36 +14,39 @@ import {
     updateUserData,
     writePortfoliosData,
 } from '../../services/realtimeDatabase'
+import { RootState, Navigation, Crypto } from '../../models'
 
-const SalesScreen = ({ navigation }) => {
-    const currentUser = useSelector((state) => state.user.user)
-    const cryptoPortfolio = useSelector((state) => state.crypto.cryptoPortfolio)
+const SalesScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
+    const currentUser = useSelector((state: RootState) => state.user.user)
+    const cryptoPortfolio = useSelector(
+        (state: RootState) => state.crypto.cryptoPortfolio
+    )
     const dispatch = useDispatch()
     const [sellAllCrypto, setSellAllCrypto] = useState(true)
-    const [crypto, setCrypto] = useState('')
-    const [cryptoAmount, setCryptoAmount] = useState(0)
-    const [equivalentUSD, setEquivalentUSD] = useState(0)
+    const [crypto, setCrypto] = useState<string>('')
+    const [cryptoAmount, setCryptoAmount] = useState<number>(0)
+    const [equivalentUSD, setEquivalentUSD] = useState<number>(0)
 
-    const handleCryptoChange = (value) => {
+    const handleCryptoChange = (value: string) => {
         const selectedCrypto = cryptoPortfolio.find(
             (crypto) => crypto.value === value
         )
 
         setCrypto(value)
-        setCryptoAmount(selectedCrypto?.amount.toString())
+        setCryptoAmount(selectedCrypto?.amount ?? 0)
         setEquivalentUSD(
-            Number(selectedCrypto?.amount) * Number(selectedCrypto?.priceUSD)
+            (selectedCrypto?.amount ?? 0) * (selectedCrypto?.priceUSD ?? 0)
         )
     }
 
-    const handleAmountChange = (value) => {
-        setCryptoAmount(value)
+    const handleAmountChange = (value: string) => {
+        setCryptoAmount(Number(value))
 
         const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
-        setEquivalentUSD(Number(value) * Number(selectedCrypto?.priceUSD))
+        setEquivalentUSD(Number(value) * (selectedCrypto?.priceUSD ?? 0))
     }
 
     const handleSwitchChange = () => {
@@ -52,22 +54,19 @@ const SalesScreen = ({ navigation }) => {
 
         setCryptoAmount(
             sellAllCrypto
-                ? ''
-                : cryptoPortfolio.find((crypto) => crypto === crypto).amount
+                ? 0
+                : cryptoPortfolio.find((crypto) => crypto === crypto)?.amount ??
+                      0
         )
         setEquivalentUSD(
             sellAllCrypto
                 ? 0
-                : Number(
-                      cryptoPortfolio.find(
+                : (cryptoPortfolio.find(
+                      (cryptoObj) => cryptoObj.value === crypto
+                  )?.amount ?? 0) *
+                      (cryptoPortfolio.find(
                           (cryptoObj) => cryptoObj.value === crypto
-                      ).amount
-                  ) *
-                      Number(
-                          cryptoPortfolio.find(
-                              (cryptoObj) => cryptoObj.value === crypto
-                          ).priceUSD
-                      )
+                      )?.priceUSD ?? 0)
         )
     }
 
@@ -75,8 +74,8 @@ const SalesScreen = ({ navigation }) => {
         !crypto ||
         !cryptoAmount ||
         cryptoAmount >
-            cryptoPortfolio.find((cryptoObj) => cryptoObj.value === crypto)
-                .amount
+            (cryptoPortfolio.find((cryptoObj) => cryptoObj.value === crypto)
+                ?.amount ?? 0)
 
     const clearFields = () => {
         setCrypto('')
@@ -84,7 +83,11 @@ const SalesScreen = ({ navigation }) => {
         setEquivalentUSD(0)
     }
 
-    const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
+    const getNewCryptoPortfolio = (
+        cryptoPortfolio: Crypto[],
+        crypto: string,
+        amount: number
+    ) => {
         return cryptoPortfolio.map((cryptoObj) => {
             if (cryptoObj.value === crypto) {
                 return {
@@ -104,8 +107,7 @@ const SalesScreen = ({ navigation }) => {
             )
             const newBalance =
                 currentUser.balanceUSD +
-                Number(selectedCrypto?.amount) *
-                    Number(selectedCrypto?.priceUSD)
+                (selectedCrypto?.amount ?? 0) * (selectedCrypto?.priceUSD ?? 0)
             writeTransactionData(
                 currentUser.uid,
                 crypto,
