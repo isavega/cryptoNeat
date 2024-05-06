@@ -59,7 +59,6 @@ const ShoppingScreen = ({ navigation }) => {
     const handleBuy = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
-            console.log('Compra exitosa')
             const newBalance = currentUser.balanceUSD - Number(usdAmount)
             const newPortfolio = getNewCryptoPortfolio(
                 cryptoPortfolio,

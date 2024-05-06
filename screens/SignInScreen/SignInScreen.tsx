@@ -50,7 +50,9 @@ const SignInScreen = ({ navigation }) => {
             readUserPortfolio(user.uid)
             user && navigation.navigate('Home')
         } catch (error) {
-            console.log('error', error)
+            alert(
+                `Error: ${error.code}. Por favor, intenta con otro correo electrónico o contraseña`
+            )
         }
     }
 

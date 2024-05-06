@@ -99,7 +99,6 @@ const SalesScreen = ({ navigation }) => {
     const handleSell = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
-            console.log('Venta exitosa')
             const selectedCrypto = cryptoPortfolio.find(
                 (cryptoObj) => cryptoObj.value === crypto
             )
