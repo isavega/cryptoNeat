@@ -15,6 +15,7 @@ import {
     writePortfoliosData,
 } from '../../services/realtimeDatabase'
 import { RootState, Navigation, Crypto } from '../../models'
+import Rocket from '../../components/Rocket/Rocket'
 
 const SalesScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
     const currentUser = useSelector((state: RootState) => state.user.user)
@@ -26,6 +27,7 @@ const SalesScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
     const [crypto, setCrypto] = useState<string>('')
     const [cryptoAmount, setCryptoAmount] = useState<number>(0)
     const [equivalentUSD, setEquivalentUSD] = useState<number>(0)
+    const [showRocket, setShowRocket] = useState(false)
 
     const handleCryptoChange = (value: string) => {
         const selectedCrypto = cryptoPortfolio.find(
@@ -127,7 +129,12 @@ const SalesScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
                 )
             )
             clearFields()
-            navigation.navigate('Home')
+            setShowRocket(true)
+            alert('La venta ha sido exitosa! 🚀')
+            setTimeout(() => {
+                setShowRocket(false)
+                navigation.navigate('Home')
+            }, 3000)
         } else {
             alert('La venta ha fallado, intenta de nuevo.')
         }
@@ -181,6 +188,7 @@ const SalesScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
                     }
                     titleStyle={style.buttonText}
                 />
+                {showRocket && <Rocket isAnimated={showRocket} />}
             </View>
         </View>
     )

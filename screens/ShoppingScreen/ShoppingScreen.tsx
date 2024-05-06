@@ -15,6 +15,7 @@ import {
     writePortfoliosData,
 } from '../../services/realtimeDatabase'
 import { RootState, Navigation, Crypto } from '../../models'
+import Rocket from '../../components/Rocket/Rocket'
 
 const ShoppingScreen: React.FC<{ navigation: Navigation }> = ({
     navigation,
@@ -28,6 +29,7 @@ const ShoppingScreen: React.FC<{ navigation: Navigation }> = ({
     const [crypto, setCrypto] = useState<string>('')
     const [usdAmount, setUsdAmount] = useState<string>('')
     const [equivalentCrypto, setEquivalentCrypto] = useState<number>(0)
+    const [showRocket, setShowRocket] = useState(false)
 
     const isDisabled =
         !crypto || !usdAmount || Number(usdAmount) > currentUser.balanceUSD
@@ -86,7 +88,12 @@ const ShoppingScreen: React.FC<{ navigation: Navigation }> = ({
             dispatch(updateBalance(newBalance))
             dispatch(updateCryptoPortfolio(newPortfolio))
             clearFields()
-            navigation.navigate('Home')
+            setShowRocket(true)
+            alert('La compra ha sido exitosa! 🚀')
+            setTimeout(() => {
+                setShowRocket(false)
+                navigation.navigate('Home')
+            }, 3000)
         } else {
             alert('La compra ha fallado, intenta de nuevo.')
         }
@@ -139,6 +146,7 @@ const ShoppingScreen: React.FC<{ navigation: Navigation }> = ({
                     }
                     titleStyle={style.buttonText}
                 />
+                {showRocket && <Rocket isAnimated={showRocket} />}
             </View>
         </View>
     )
