@@ -8,6 +8,7 @@ const style = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'center',
         padding: '5%',
+        marginBottom: 40,
     },
     cardContainer: {
         margin: '2%',
@@ -23,14 +24,14 @@ const style = StyleSheet.create({
         resizeMode: 'contain',
     },
     text: {
-        marginTop: 20,
+        marginTop: 10,
         color: color.white,
         fontSize: 16,
         textAlign: 'center',
         fontFamily: 'PoppinsRegular',
     },
     textBalance: {
-        marginTop: 20,
+        marginTop: 10,
         color: color.white,
         fontSize: 22,
         textAlign: 'center',
@@ -63,7 +64,8 @@ const style = StyleSheet.create({
         width: 300,
         padding: 10,
         borderRadius: 5,
-        marginTop: 20,
+        marginTop: 10,
+        marginBottom: 5,
     },
 })
 
