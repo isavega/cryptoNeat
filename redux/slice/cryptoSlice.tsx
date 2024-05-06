@@ -42,7 +42,7 @@ const cryptoSlice = createSlice({
     initialState,
     reducers: {
         updateCryptoPortfolio: (state, action) => {
-            state.cryptoPortfolio = action.payload.cryptoPortfolio
+            state.cryptoPortfolio = action.payload
         },
         restarCryptoPortfolio: (state) => {
             state.cryptoPortfolio = initialState.cryptoPortfolio

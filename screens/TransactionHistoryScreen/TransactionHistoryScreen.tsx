@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ScrollView } from 'react-native'
 import { ListItem } from '@rneui/themed'
 import style from './styles'
-import { BUY, transactionTypeMap } from '../../utils/constants'
+import { BUY } from '../../utils/constants'
 import { formatDateTime } from '../../utils/utils'
 import { getDatabase, ref, onValue } from 'firebase/database'
 import { useSelector } from 'react-redux'
@@ -43,8 +43,9 @@ const TransactionHistoryScreen = () => {
                                     : style.itemSell
                             }
                         >
-                            {transactionTypeMap[item.operationType]} de{' '}
-                            {item.amount} {item.crypto}
+                            {item.operationType === BUY
+                                ? `Compra de $${item.amount} USD para ${item.crypto}`
+                                : `Venta de ${item.amount} ${item.crypto}`}
                         </ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>

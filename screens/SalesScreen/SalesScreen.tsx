@@ -22,8 +22,8 @@ const SalesScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const [sellAllCrypto, setSellAllCrypto] = useState(true)
     const [crypto, setCrypto] = useState('')
-    const [amount, setAmount] = useState('')
-    const [equivalentUSD, setEquivalentUSD] = useState('')
+    const [cryptoAmount, setCryptoAmount] = useState(0)
+    const [equivalentUSD, setEquivalentUSD] = useState(0)
 
     const handleCryptoChange = (value) => {
         const selectedCrypto = cryptoPortfolio.find(
@@ -31,81 +31,69 @@ const SalesScreen = ({ navigation }) => {
         )
 
         setCrypto(value)
-        setAmount(selectedCrypto?.amount.toString())
+        setCryptoAmount(selectedCrypto?.amount.toString())
         setEquivalentUSD(
-            `$ ${(
-                Number(selectedCrypto?.amount) *
-                Number(selectedCrypto?.priceUSD)
-            ).toFixed(2)} USD`
+            Number(selectedCrypto?.amount) * Number(selectedCrypto?.priceUSD)
         )
     }
 
     const handleAmountChange = (value) => {
-        setAmount(value)
+        setCryptoAmount(value)
 
         const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
-        setEquivalentUSD(
-            `$ ${(Number(value) * Number(selectedCrypto?.priceUSD)).toFixed(
-                2
-            )} USD`
-        )
+        setEquivalentUSD(Number(value) * Number(selectedCrypto?.priceUSD))
     }
 
     const handleSwitchChange = () => {
         setSellAllCrypto(!sellAllCrypto)
 
-        setAmount(
+        setCryptoAmount(
             sellAllCrypto
                 ? ''
                 : cryptoPortfolio.find((crypto) => crypto === crypto).amount
         )
         setEquivalentUSD(
             sellAllCrypto
-                ? ''
-                : `$ ${(
-                      Number(
-                          cryptoPortfolio.find(
-                              (cryptoObj) => cryptoObj.value === crypto
-                          ).amount
-                      ) *
+                ? 0
+                : Number(
+                      cryptoPortfolio.find(
+                          (cryptoObj) => cryptoObj.value === crypto
+                      ).amount
+                  ) *
                       Number(
                           cryptoPortfolio.find(
                               (cryptoObj) => cryptoObj.value === crypto
                           ).priceUSD
                       )
-                  ).toFixed(2)} USD`
         )
     }
 
     const isDisabled =
         !crypto ||
-        !amount ||
-        amount >
+        !cryptoAmount ||
+        cryptoAmount >
             cryptoPortfolio.find((cryptoObj) => cryptoObj.value === crypto)
                 .amount
+
+    const clearFields = () => {
+        setCrypto('')
+        setCryptoAmount(0)
+        setEquivalentUSD(0)
+    }
 
     const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
         return cryptoPortfolio.map((cryptoObj) => {
             if (cryptoObj.value === crypto) {
-                const updatedAmount = (
-                    Number(cryptoObj.amount) - Number(amount)
-                ).toFixed(8)
                 return {
                     ...cryptoObj,
-                    amount: parseFloat(updatedAmount).toString(),
+                    amount: Number(cryptoObj.amount) - Number(amount),
                 }
             }
             return cryptoObj
         })
-    }
-
-    const clearFields = () => {
-        setCrypto('')
-        setAmount('')
-        setEquivalentUSD('')
     }
 
     const handleSell = () => {
@@ -122,19 +110,19 @@ const SalesScreen = ({ navigation }) => {
             writeTransactionData(
                 currentUser.uid,
                 crypto,
-                amount,
+                cryptoAmount,
                 SELL,
                 new Date().toISOString()
             )
             writePortfoliosData(
                 currentUser.uid,
-                getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
+                getNewCryptoPortfolio(cryptoPortfolio, crypto, cryptoAmount)
             )
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
             dispatch(
                 updateCryptoPortfolio(
-                    getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
+                    getNewCryptoPortfolio(cryptoPortfolio, crypto, cryptoAmount)
                 )
             )
             clearFields()
@@ -164,7 +152,7 @@ const SalesScreen = ({ navigation }) => {
                 </View>
 
                 <Input
-                    value={amount}
+                    value={`${cryptoAmount}`}
                     onChangeText={handleAmountChange}
                     placeholder="Cantidad de cryptos"
                     inputContainerStyle={style.inputContainer}
@@ -173,7 +161,7 @@ const SalesScreen = ({ navigation }) => {
                     readOnly={sellAllCrypto}
                 />
                 <Input
-                    value={equivalentUSD}
+                    value={`$ ${equivalentUSD} USD`}
                     placeholder="Equivalente en USD aproximado"
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputTextReadOnly}

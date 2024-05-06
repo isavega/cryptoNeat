@@ -37,12 +37,8 @@ const SignInScreen = ({ navigation }) => {
         const starCountRef = ref(db, 'portfolios/' + userId)
         onValue(starCountRef, (snapshot) => {
             const data = snapshot.val()
-            const cryptoPortfolio = Object.values(data)
-            dispatch(
-                updateCryptoPortfolio({
-                    cryptoPortfolio: cryptoPortfolio,
-                })
-            )
+            const cryptoPortfolio = Object.values(data).flat()
+            dispatch(updateCryptoPortfolio(cryptoPortfolio))
         })
     }
 

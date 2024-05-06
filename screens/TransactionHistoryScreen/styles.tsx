@@ -10,17 +10,17 @@ const style = StyleSheet.create({
     },
     itemDate: {
         color: color.white,
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'PoppinsRegular',
     },
     itemBuy: {
         color: color.feedback.error,
-        fontSize: 16,
+        fontSize: 12,
         fontFamily: 'PoppinsRegular',
     },
     itemSell: {
         color: color.feedback.success,
-        fontSize: 16,
+        fontSize: 12,
         fontFamily: 'PoppinsRegular',
     },
 })

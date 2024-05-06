@@ -22,35 +22,34 @@ const ShoppingScreen = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const [crypto, setCrypto] = useState('')
-    const [amount, setAmount] = useState('')
-    const [equivalentCrypto, setEquivalentCrypto] = useState('')
+    const [usdAmount, setUsdAmount] = useState('')
+    const [equivalentCrypto, setEquivalentCrypto] = useState(0)
 
-    const isDisabled = !crypto || !amount || amount > currentUser.balanceUSD
+    const isDisabled =
+        !crypto || !usdAmount || usdAmount > currentUser.balanceUSD
 
     const handleAmountChange = (value) => {
-        setAmount(value)
+        setUsdAmount(value)
 
         const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
-        setEquivalentCrypto(
-            `$ ${Number(value) / Number(selectedCrypto?.priceUSD)} ${
-                selectedCrypto?.value
-            }`
-        )
+        setEquivalentCrypto(Number(value) / Number(selectedCrypto?.priceUSD))
+    }
+
+    const clearFields = () => {
+        setCrypto('')
+        setUsdAmount('')
+        setEquivalentCrypto(0)
     }
 
     const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
         return cryptoPortfolio.map((cryptoObj) => {
             if (cryptoObj.value === crypto) {
-                const updatedAmount =
-                    Number(cryptoObj.amount) +
-                    (Number(amount) / Number(cryptoObj.priceUSD)).toFixed(8)
-
                 return {
                     ...cryptoObj,
-                    amount: parseFloat(updatedAmount).toString(),
+                    amount: Number(cryptoObj.amount) + Number(amount),
                 }
             }
             return cryptoObj
@@ -61,29 +60,28 @@ const ShoppingScreen = ({ navigation }) => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
             console.log('Compra exitosa')
-            const newBalance = currentUser.balanceUSD - Number(amount)
+            const newBalance = currentUser.balanceUSD - Number(usdAmount)
+            const newPortfolio = getNewCryptoPortfolio(
+                cryptoPortfolio,
+                crypto,
+                equivalentCrypto
+            )
             writeTransactionData(
                 currentUser.uid,
                 crypto,
-                amount,
+                usdAmount,
                 BUY,
                 new Date().toISOString()
             )
-            writePortfoliosData(
-                currentUser.uid,
-                getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
-            )
+            writePortfoliosData(currentUser.uid, newPortfolio)
 
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
-            dispatch(
-                updateCryptoPortfolio(
-                    getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
-                )
-            )
+            dispatch(updateCryptoPortfolio(newPortfolio))
+            clearFields()
             navigation.navigate('Home')
         } else {
-            console.log('Compra fallida')
+            alert('La compra ha fallado, intenta de nuevo.')
         }
     }
 
@@ -106,7 +104,7 @@ const ShoppingScreen = ({ navigation }) => {
                 />
 
                 <Input
-                    value={amount}
+                    value={usdAmount}
                     onChangeText={handleAmountChange}
                     placeholder="Cantidad de USD"
                     inputContainerStyle={style.inputContainer}
@@ -115,7 +113,7 @@ const ShoppingScreen = ({ navigation }) => {
                     readOnly={!crypto}
                 />
                 <Input
-                    value={equivalentCrypto}
+                    value={`$ ${equivalentCrypto} ${crypto}`}
                     placeholder={`Equivalente en ${crypto} aproximado`}
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputTextReadOnly}

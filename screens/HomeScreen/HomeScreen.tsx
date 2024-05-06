@@ -42,7 +42,7 @@ const HomeScreen = ({ navigation }) => {
                                 }}
                             />
                             <Text style={style.balanceCard}>
-                                {crypto.amount}
+                                {crypto?.amount}
                             </Text>
                             <Text style={style.priceCard}>
                                 1 {crypto.value} = ${crypto?.priceUSD} USD
