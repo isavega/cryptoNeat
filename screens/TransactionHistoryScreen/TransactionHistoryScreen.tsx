@@ -16,7 +16,6 @@ const TransactionHistoryScreen = () => {
         const starCountRef = ref(db, 'transactions/' + userId)
         onValue(starCountRef, (snapshot) => {
             const data = snapshot.val()
-            console.log('TRX DATA: ', Object.values(data))
             setTransactionData(Object.values(data))
         })
     }

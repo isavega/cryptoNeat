@@ -5,8 +5,19 @@ import style from './styles'
 import color from '../../styles/colors'
 import Dropdown from 'react-native-input-select'
 import { dummyCryptoData } from '../../utils/constants'
+import { useSelector } from 'react-redux'
+import { generateRandomSuccessRate } from '../../utils/utils'
+import { SELL } from '../../utils/constants'
+import { useDispatch } from 'react-redux'
+import { updateBalance } from '../../redux/slice/userSlice'
+import {
+    writeTransactionData,
+    updateUserData,
+} from '../../services/realTimeDataBase'
 
-const SalesScreen = () => {
+const SalesScreen = ({ navigation }) => {
+    const currentUser = useSelector((state) => state.user.user)
+    const dispatch = useDispatch()
     const [sellAllCrypto, setSellAllCrypto] = useState(true)
     const [crypto, setCrypto] = useState('')
     const [amount, setAmount] = useState('')
@@ -74,6 +85,32 @@ const SalesScreen = () => {
             dummyCryptoData.find((cryptoObj) => cryptoObj.value === crypto)
                 .amount
 
+    const handleSell = () => {
+        const isSuccessful = generateRandomSuccessRate()
+        if (isSuccessful) {
+            console.log('Venta exitosa')
+            const selectedCrypto = dummyCryptoData.find(
+                (cryptoObj) => cryptoObj.value === crypto
+            )
+            const newBalance =
+                currentUser.balanceUSD +
+                Number(selectedCrypto?.amount) *
+                    Number(selectedCrypto?.priceUSD)
+            writeTransactionData(
+                currentUser.uid,
+                crypto,
+                amount,
+                SELL,
+                new Date().toISOString()
+            )
+            updateUserData(currentUser.uid, newBalance)
+            dispatch(updateBalance(newBalance))
+            navigation.navigate('Home')
+        } else {
+            console.log('Venta fallida')
+        }
+    }
+
     return (
         <View style={style.screen}>
             <View style={style.formContainer}>
@@ -114,7 +151,7 @@ const SalesScreen = () => {
                     title="Vender"
                     type="outline"
                     disabled={isDisabled}
-                    onPress={() => {}}
+                    onPress={handleSell}
                     buttonStyle={
                         isDisabled
                             ? style.buttonContainerDisabled

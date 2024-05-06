@@ -3,11 +3,11 @@ import { View, Text, Image } from 'react-native'
 import { Input, Button } from '@rneui/themed'
 import style from './styles'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { auth } from '../../services/auth'
+import { auth } from '../../services/firebase'
 import { signUp } from '../../redux/slice/userSlice'
 import { useDispatch } from 'react-redux'
 import { generateRandomNumber } from '../../utils/utils'
-import { getDatabase, ref, set } from 'firebase/database'
+import { writeUserData } from '../../services/realTimeDataBase'
 
 const IMAGE = '../../assets/neat.png'
 
@@ -18,16 +18,6 @@ const SignInScreen = ({ navigation }) => {
     const [password, setPassword] = useState('')
     const [userName, setUserName] = useState<string>('')
     const initialBalance = generateRandomNumber()
-
-    const writeUserData = (userId, name, email, balance) => {
-        const db = getDatabase()
-        set(ref(db, 'users/' + userId), {
-            uid: userId,
-            username: name,
-            email: email,
-            balanceUSD: balance,
-        })
-    }
 
     const signUpHandler = async () => {
         try {

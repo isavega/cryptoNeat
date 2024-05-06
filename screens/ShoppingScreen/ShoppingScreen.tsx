@@ -7,10 +7,13 @@ import color from '../../styles/colors'
 import { dummyCryptoData } from '../../utils/constants'
 import { useSelector } from 'react-redux'
 import { formatToUSD, generateRandomSuccessRate } from '../../utils/utils'
-import { getDatabase, push, ref, set, update } from 'firebase/database'
 import { BUY } from '../../utils/constants'
 import { useDispatch } from 'react-redux'
 import { updateBalance } from '../../redux/slice/userSlice'
+import {
+    writeTransactionData,
+    updateUserData,
+} from '../../services/realTimeDataBase'
 
 const ShoppingScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)
@@ -34,30 +37,6 @@ const ShoppingScreen = ({ navigation }) => {
                 selectedCrypto?.value
             }`
         )
-    }
-
-    const writeTransactionData = (
-        userId,
-        crypto,
-        amount,
-        operationType,
-        date
-    ) => {
-        const db = getDatabase()
-        const newTransactionRef = ref(db, 'transactions/' + userId)
-        push(newTransactionRef, {
-            crypto,
-            amount,
-            operationType,
-            date,
-        })
-    }
-
-    const updateUserData = (userId, balance) => {
-        const db = getDatabase()
-        update(ref(db, 'users/' + userId), {
-            balanceUSD: balance,
-        })
     }
 
     const handleBuy = () => {
