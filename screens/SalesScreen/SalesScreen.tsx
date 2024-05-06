@@ -102,6 +102,12 @@ const SalesScreen = ({ navigation }) => {
         })
     }
 
+    const clearFields = () => {
+        setCrypto('')
+        setAmount('')
+        setEquivalentUSD('')
+    }
+
     const handleSell = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
@@ -131,9 +137,10 @@ const SalesScreen = ({ navigation }) => {
                     getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
                 )
             )
+            clearFields()
             navigation.navigate('Home')
         } else {
-            console.log('Venta fallida')
+            alert('La venta ha fallado, intenta de nuevo.')
         }
     }
 
