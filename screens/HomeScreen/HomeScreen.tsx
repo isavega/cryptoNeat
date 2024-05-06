@@ -3,11 +3,11 @@ import { View, Image, Text, ScrollView } from 'react-native'
 import { Button, Card } from '@rneui/themed'
 import style from './styles'
 import { useSelector } from 'react-redux'
-import { dummyCryptoData } from '../../utils/constants'
 import { formatToUSD } from '../../utils/utils'
 
 const HomeScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)
+    const cryptoPortfolio = useSelector((state) => state.crypto.cryptoPortfolio)
 
     return (
         <ScrollView style={style.scrollScreen}>
@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }) => {
                 ${formatToUSD(currentUser?.balanceUSD)} USD
             </Text>
             <View style={style.container}>
-                {dummyCryptoData.map((crypto) => (
+                {cryptoPortfolio.map((crypto) => (
                     <Card
                         key={crypto.id}
                         containerStyle={style.cardContainer}
