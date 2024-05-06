@@ -4,12 +4,12 @@ import { Button, Input } from '@rneui/themed'
 import style from './styles'
 import Dropdown from 'react-native-input-select'
 import color from '../../styles/colors'
-import { dummyCryptoData } from '../../utils/constants'
 import { useSelector } from 'react-redux'
 import { formatToUSD, generateRandomSuccessRate } from '../../utils/utils'
 import { BUY } from '../../utils/constants'
 import { useDispatch } from 'react-redux'
 import { updateBalance } from '../../redux/slice/userSlice'
+import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
     writeTransactionData,
     updateUserData,
@@ -17,22 +17,23 @@ import {
 
 const ShoppingScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)
+    const cryptoPortfolio = useSelector((state) => state.crypto.cryptoPortfolio)
     const dispatch = useDispatch()
 
     const [crypto, setCrypto] = useState('')
     const [amount, setAmount] = useState('')
-    const [equivalentUSD, setEquivalentUSD] = useState('')
+    const [equivalentCrypto, setEquivalentCrypto] = useState('')
 
     const isDisabled = !crypto || !amount || amount > currentUser.balanceUSD
 
     const handleAmountChange = (value) => {
         setAmount(value)
 
-        const selectedCrypto = dummyCryptoData.find(
+        const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
-        setEquivalentUSD(
+        setEquivalentCrypto(
             `$ ${Number(value) / Number(selectedCrypto?.priceUSD)} ${
                 selectedCrypto?.value
             }`
@@ -44,6 +45,9 @@ const ShoppingScreen = ({ navigation }) => {
         if (isSuccessful) {
             console.log('Compra exitosa')
             const newBalance = currentUser.balanceUSD - Number(amount)
+            const selectedCrypto = cryptoPortfolio.find(
+                (cryptoObj) => cryptoObj.value === crypto
+            )
             writeTransactionData(
                 currentUser.uid,
                 crypto,
@@ -53,6 +57,23 @@ const ShoppingScreen = ({ navigation }) => {
             )
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
+            dispatch(
+                updateCryptoPortfolio(
+                    cryptoPortfolio.map((cryptoObj) => {
+                        if (cryptoObj.value === crypto) {
+                            return {
+                                ...cryptoObj,
+                                amount: (
+                                    Number(cryptoObj.amount) +
+                                    Number(amount) /
+                                        Number(selectedCrypto?.priceUSD)
+                                ).toFixed(8),
+                            }
+                        }
+                        return cryptoObj
+                    })
+                )
+            )
             navigation.navigate('Home')
         } else {
             console.log('Compra fallida')
@@ -69,7 +90,7 @@ const ShoppingScreen = ({ navigation }) => {
                 </Text>
                 <Dropdown
                     placeholder="Selecciona una crypto"
-                    options={dummyCryptoData}
+                    options={cryptoPortfolio}
                     selectedValue={crypto}
                     onValueChange={(value) => {
                         setCrypto(value)
@@ -84,9 +105,10 @@ const ShoppingScreen = ({ navigation }) => {
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputText}
                     keyboardType="numeric"
+                    readOnly={!crypto}
                 />
                 <Input
-                    value={equivalentUSD}
+                    value={equivalentCrypto}
                     placeholder={`Equivalente en ${crypto} aproximado`}
                     inputContainerStyle={style.inputContainer}
                     inputStyle={style.inputTextReadOnly}

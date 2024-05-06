@@ -4,12 +4,12 @@ import { Button, Input, Switch } from '@rneui/themed'
 import style from './styles'
 import color from '../../styles/colors'
 import Dropdown from 'react-native-input-select'
-import { dummyCryptoData } from '../../utils/constants'
 import { useSelector } from 'react-redux'
 import { generateRandomSuccessRate } from '../../utils/utils'
 import { SELL } from '../../utils/constants'
 import { useDispatch } from 'react-redux'
 import { updateBalance } from '../../redux/slice/userSlice'
+import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
     writeTransactionData,
     updateUserData,
@@ -17,6 +17,7 @@ import {
 
 const SalesScreen = ({ navigation }) => {
     const currentUser = useSelector((state) => state.user.user)
+    const cryptoPortfolio = useSelector((state) => state.crypto.cryptoPortfolio)
     const dispatch = useDispatch()
     const [sellAllCrypto, setSellAllCrypto] = useState(true)
     const [crypto, setCrypto] = useState('')
@@ -24,7 +25,7 @@ const SalesScreen = ({ navigation }) => {
     const [equivalentUSD, setEquivalentUSD] = useState('')
 
     const handleCryptoChange = (value) => {
-        const selectedCrypto = dummyCryptoData.find(
+        const selectedCrypto = cryptoPortfolio.find(
             (crypto) => crypto.value === value
         )
 
@@ -41,7 +42,7 @@ const SalesScreen = ({ navigation }) => {
     const handleAmountChange = (value) => {
         setAmount(value)
 
-        const selectedCrypto = dummyCryptoData.find(
+        const selectedCrypto = cryptoPortfolio.find(
             (cryptoObj) => cryptoObj.value === crypto
         )
 
@@ -58,19 +59,19 @@ const SalesScreen = ({ navigation }) => {
         setAmount(
             sellAllCrypto
                 ? ''
-                : dummyCryptoData.find((crypto) => crypto === crypto).amount
+                : cryptoPortfolio.find((crypto) => crypto === crypto).amount
         )
         setEquivalentUSD(
             sellAllCrypto
                 ? ''
                 : `$ ${(
                       Number(
-                          dummyCryptoData.find(
+                          cryptoPortfolio.find(
                               (cryptoObj) => cryptoObj.value === crypto
                           ).amount
                       ) *
                       Number(
-                          dummyCryptoData.find(
+                          cryptoPortfolio.find(
                               (cryptoObj) => cryptoObj.value === crypto
                           ).priceUSD
                       )
@@ -82,14 +83,14 @@ const SalesScreen = ({ navigation }) => {
         !crypto ||
         !amount ||
         amount >
-            dummyCryptoData.find((cryptoObj) => cryptoObj.value === crypto)
+            cryptoPortfolio.find((cryptoObj) => cryptoObj.value === crypto)
                 .amount
 
     const handleSell = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
             console.log('Venta exitosa')
-            const selectedCrypto = dummyCryptoData.find(
+            const selectedCrypto = cryptoPortfolio.find(
                 (cryptoObj) => cryptoObj.value === crypto
             )
             const newBalance =
@@ -105,6 +106,20 @@ const SalesScreen = ({ navigation }) => {
             )
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
+            dispatch(
+                updateCryptoPortfolio(
+                    cryptoPortfolio.map((cryptoObj) => {
+                        if (cryptoObj.value === crypto) {
+                            return {
+                                ...cryptoObj,
+                                amount:
+                                    Number(cryptoObj.amount) - Number(amount),
+                            }
+                        }
+                        return cryptoObj
+                    })
+                )
+            )
             navigation.navigate('Home')
         } else {
             console.log('Venta fallida')
@@ -116,7 +131,7 @@ const SalesScreen = ({ navigation }) => {
             <View style={style.formContainer}>
                 <Dropdown
                     placeholder="Selecciona una crypto"
-                    options={dummyCryptoData}
+                    options={cryptoPortfolio}
                     selectedValue={crypto}
                     onValueChange={handleCryptoChange}
                     primaryColor={color.information.primary}
