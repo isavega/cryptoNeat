@@ -41,7 +41,7 @@ const HomeScreen: React.FC<{ navigation: Navigation }> = ({ navigation }) => {
                                 }}
                             />
                             <Text style={style.balanceCard}>
-                                {crypto?.amount.toFixed(3)}
+                                {Number(crypto?.amount).toFixed(3)}
                             </Text>
                             <Text style={style.priceCard}>
                                 1 {crypto.value} = ${crypto?.priceUSD} USD
