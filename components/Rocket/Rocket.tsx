@@ -6,7 +6,11 @@ import Animated, {
 } from 'react-native-reanimated'
 import RocketPro from '../../components/RocketPro/RocketPro'
 
-const Rocket = ({ isAnimated }) => {
+interface RocketProps {
+    isAnimated: boolean
+}
+
+const Rocket: React.FC<RocketProps> = ({ isAnimated }) => {
     const translateY = useSharedValue(0)
 
     const animatedStyle = useAnimatedStyle(() => {
