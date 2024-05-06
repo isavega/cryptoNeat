@@ -18,9 +18,9 @@ yarn start
 
 ## Aclaraciones
 
-1. Funciona tanto en IOS como Android.
-2. Por simplicidad, no agregué la confirmación del correo electrónico al momento de crear una cuenta. Pero esto se puede configurar desde la consola del proyecto en Firebase.
-3. Para el portafolio, consideré a las 4 criptomonedas en las cuales asumo un precio fijo en USD (Mayo 2024).
+1. Funciona tanto en IOS como Android. Se puede probar en ambos dispositivos con la app de Expo.
+2. Por simplicidad, no agregué la confirmación del correo electrónico al momento de crear una cuenta. Esto se puede configurar desde la consola del proyecto en Firebase.
+3. Para el portafolio, consideré 4 criptomonedas en las cuales asumo un precio fijo en USD (Mayo 2024).
 4. Al crear cada usuario se le asigna un portafolio con montos iniciales de criptomonedas para facilitar la simulación de compra/venta. Las asignaciones son las siguientes:
 
 ```
