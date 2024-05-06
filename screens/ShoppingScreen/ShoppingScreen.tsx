@@ -13,6 +13,7 @@ import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
     writeTransactionData,
     updateUserData,
+    writePortfoliosData,
 } from '../../services/realtimeDatabase'
 
 const ShoppingScreen = ({ navigation }) => {
@@ -40,14 +41,27 @@ const ShoppingScreen = ({ navigation }) => {
         )
     }
 
+    const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
+        return cryptoPortfolio.map((cryptoObj) => {
+            if (cryptoObj.value === crypto) {
+                const updatedAmount =
+                    Number(cryptoObj.amount) +
+                    (Number(amount) / Number(cryptoObj.priceUSD)).toFixed(8)
+
+                return {
+                    ...cryptoObj,
+                    amount: parseFloat(updatedAmount).toString(),
+                }
+            }
+            return cryptoObj
+        })
+    }
+
     const handleBuy = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
             console.log('Compra exitosa')
             const newBalance = currentUser.balanceUSD - Number(amount)
-            const selectedCrypto = cryptoPortfolio.find(
-                (cryptoObj) => cryptoObj.value === crypto
-            )
             writeTransactionData(
                 currentUser.uid,
                 crypto,
@@ -55,23 +69,16 @@ const ShoppingScreen = ({ navigation }) => {
                 BUY,
                 new Date().toISOString()
             )
+            writePortfoliosData(
+                currentUser.uid,
+                getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
+            )
+
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
             dispatch(
                 updateCryptoPortfolio(
-                    cryptoPortfolio.map((cryptoObj) => {
-                        if (cryptoObj.value === crypto) {
-                            return {
-                                ...cryptoObj,
-                                amount: (
-                                    Number(cryptoObj.amount) +
-                                    Number(amount) /
-                                        Number(selectedCrypto?.priceUSD)
-                                ).toFixed(8),
-                            }
-                        }
-                        return cryptoObj
-                    })
+                    getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
                 )
             )
             navigation.navigate('Home')

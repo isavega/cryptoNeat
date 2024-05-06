@@ -13,6 +13,7 @@ import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 import {
     writeTransactionData,
     updateUserData,
+    writePortfoliosData,
 } from '../../services/realtimeDatabase'
 
 const SalesScreen = ({ navigation }) => {
@@ -86,6 +87,21 @@ const SalesScreen = ({ navigation }) => {
             cryptoPortfolio.find((cryptoObj) => cryptoObj.value === crypto)
                 .amount
 
+    const getNewCryptoPortfolio = (cryptoPortfolio, crypto, amount) => {
+        return cryptoPortfolio.map((cryptoObj) => {
+            if (cryptoObj.value === crypto) {
+                const updatedAmount = (
+                    Number(cryptoObj.amount) - Number(amount)
+                ).toFixed(8)
+                return {
+                    ...cryptoObj,
+                    amount: parseFloat(updatedAmount).toString(),
+                }
+            }
+            return cryptoObj
+        })
+    }
+
     const handleSell = () => {
         const isSuccessful = generateRandomSuccessRate()
         if (isSuccessful) {
@@ -104,20 +120,15 @@ const SalesScreen = ({ navigation }) => {
                 SELL,
                 new Date().toISOString()
             )
+            writePortfoliosData(
+                currentUser.uid,
+                getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
+            )
             updateUserData(currentUser.uid, newBalance)
             dispatch(updateBalance(newBalance))
             dispatch(
                 updateCryptoPortfolio(
-                    cryptoPortfolio.map((cryptoObj) => {
-                        if (cryptoObj.value === crypto) {
-                            return {
-                                ...cryptoObj,
-                                amount:
-                                    Number(cryptoObj.amount) - Number(amount),
-                            }
-                        }
-                        return cryptoObj
-                    })
+                    getNewCryptoPortfolio(cryptoPortfolio, crypto, amount)
                 )
             )
             navigation.navigate('Home')

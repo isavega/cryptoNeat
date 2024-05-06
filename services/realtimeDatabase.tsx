@@ -33,3 +33,8 @@ export const writeTransactionData = (
         date,
     })
 }
+
+export const writePortfoliosData = (userId, portfolio) => {
+    const db = getDatabase()
+    set(ref(db, 'portfolios/' + userId), { ...portfolio })
+}

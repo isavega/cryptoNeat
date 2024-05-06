@@ -9,6 +9,7 @@ import { auth } from '../../services/firebase'
 import { useDispatch } from 'react-redux'
 import { signIn } from '../../redux/slice/userSlice'
 import { getDatabase, ref, onValue } from 'firebase/database'
+import { updateCryptoPortfolio } from '../../redux/slice/cryptoSlice'
 
 const IMAGE = '../../assets/neat.png'
 
@@ -31,11 +32,26 @@ const SignInScreen = ({ navigation }) => {
         })
     }
 
+    const readUserPortfolio = (userId) => {
+        const db = getDatabase()
+        const starCountRef = ref(db, 'portfolios/' + userId)
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val()
+            const cryptoPortfolio = Object.values(data)
+            dispatch(
+                updateCryptoPortfolio({
+                    cryptoPortfolio: cryptoPortfolio,
+                })
+            )
+        })
+    }
+
     const signInHandler = async () => {
         try {
             await signInWithEmailAndPassword(auth, email, password)
             const user = auth.currentUser
             readUserData(user.uid)
+            readUserPortfolio(user.uid)
             user && navigation.navigate('Home')
         } catch (error) {
             console.log('error', error)

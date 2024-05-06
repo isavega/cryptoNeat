@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }) => {
                 ${formatToUSD(currentUser?.balanceUSD)} USD
             </Text>
             <View style={style.container}>
-                {cryptoPortfolio.map((crypto) => (
+                {cryptoPortfolio?.map((crypto) => (
                     <Card
                         key={crypto.id}
                         containerStyle={style.cardContainer}
