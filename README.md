@@ -24,6 +24,8 @@ yarn start
 
 Y escanea el código QR con la aplicación de Expo. Funciona para Android y IOS 🙌
 
+PD: No olvides configurar tus propias variables de entorno 👁
+
 ## Aclaraciones
 
 1. Funciona tanto en IOS como Android. Se puede probar en ambos dispositivos con la app de Expo y la app corre en ambos simuladores pero solo generé el build de desarrollo para Android porque no tengo Apple Developer membership 🥲
